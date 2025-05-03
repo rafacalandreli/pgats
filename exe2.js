@@ -11,64 +11,79 @@
  * A tag so suporta 1 nome
  */
 
+const prompt = require('prompt-sync')();
 
-function isCompositeName(nome) {
-    return /\s/.test(nome.trim());
-}
- 
-function getFirstName(nome) {
-    return nome.trim().split(/\s+/)[0];
+function removerCaracteresEspeciais(nome) {
+    return nome.replace(/[^a-zA-ZÀ-ÿ\s]/g, "")
 }
 
-function formatarNome(nome) {
-    let nomeFormatado = nome.trim();
-    if (isCompositeName(nomeFormatado)) {
-        nomeFormatado = getFirstName(nomeFormatado);
+function removerEspacosEntreAPalavra(nome) {
+    return nome.replace(/\s+/g, "")
+}
+
+function tornarAPrimeiraLetraMaiuscula(nome){
+    return nome.charAt(0).toUpperCase() + nome.slice(1, nome.length).toLowerCase();
+}
+
+function verificarSeNomeValido(nome){
+    return nome.split(" ").length === 1
+}
+
+function preencherForm(animal, tipoPet){
+
+    animal.nome = prompt(`Qual é o nome do seu ${tipoPet}? `)
+    
+    const valido = verificarSeNomeValido(animal.nome)
+
+    let nomeValido = false;
+
+    while (!nomeValido) {
+        animal.nome = prompt(`Qual é o nome do seu ${tipoPet} ?`).trim();
+        nomeValido = verificarSeNomeValido(animal.nome);
+
+        if (!nomeValido) {
+            console.log("Só é suportado apenas 1 nome. Por favor, preencha novamente...");
+        }
     }
-    return nomeFormatado.charAt(0).toUpperCase()+nomeFormatado.slice(1).toLowerCase();
+
+    animal.idade = prompt(`Qual é ao idade do seu ${tipoPet} ?`)
+    animal.peso = prompt(`Qual é o peso do seu ${tipoPet} ? `)
+    animal.raca = prompt(`Qual é a raça do seu ${tipoPet} ? `).trim()
+    animal.adotado = prompt("Ele foi adotado? ?(S/N) ").trim().toLowerCase();
+    animal.racaMas = tornarAPrimeiraLetraMaiuscula(racaMas);
+    return animal;
+}
+
+function mostrarTag(animal) {
+    const nome = animal.nome;
+    const idade = animal.idade;
+    const raca = animal.racaMas;
+    const peso = animal.peso;
+    const adotado = String(animal.adotado).toLowerCase();
+
+    if (adotado === "s" || adotado === "sim") {
+        statusAdocao = "foi adotado";
+    } else if (adotado === "n" || adotado === "nao" || adotado === "não") {
+        statusAdocao = "não foi adotado";
+    } else {
+        statusAdocao = "não foi informado se foi adotado";
+    }
+
+    console.log(`O ${nome} tem ${idade} anos, é da raça ${raca}, tem ${peso} kilos e ${statusAdocao}`);
 }
   
-const prompt = require('prompt-sync')();
 const tipo = prompt("Qual eh o tipo de pet? G- Gato C- Cachorro ").trim().toLowerCase();
 
-const animal ={}
+let animal ={}
 
 if(tipo === "c" || tipo === "cachorro") { 
-    animal.nome = prompt("Qual é o nome do seu cachorro? ")
-    animal.idade = prompt("Qual é ao idade do seu cachorro? ")
-    animal.peso = prompt("Qual é o peso do seu cachorro? ")
-    animal.raca = prompt("Qual é a raça do seu cachorro? ").trim()
-    animal.adotado = prompt("Ele foi adotado? ?(S/N) ").trim().toLowerCase();
-    animal.racaMas = animal.raca[0].toUpperCase()+animal.raca.substring(1);
-
-    const formatName = formatarNome(animal.nome)
-    console.log("New Nome: "+ animal.nome)
-
-    if(animal.adotado === "s"|| animal.adotado == "Sim"){
-        console.log(`O ${formatName} tem ${animal.idade} anos, é da raça ${animal.racaMas}, tem ${animal.peso} kilos e foi adotado`);
-    } else if(animal.adotado === "n"|| animal.adotado == "Não" || animal.adotado == "Nao"){
-        console.log(`O ${formatName} tem ${animal.idade} anos, é da raça ${animal.racaMas}, tem ${animal.peso} kilos e não foi adotado`);
-    }else{
-        console.log(`O ${formatName} tem ${animal.idade} anos, é da raça ${animal.racaMas}, tem ${animal.peso} kilos e não foi informado se foi adotado`);
-    }
+    animal = preencherForm(animal, "Cachorro")
+    mostrarTag(animal)
+   
 } else if (tipo === "g"|| tipo === "gato") {
-    animal.nome = prompt("Qual é o nome do seu gato? ")
-    animal.idade = prompt("Qual é ao idade do seu gato? ")
-    animal.peso = prompt("Qual é o peso do seu gato? ")
-    animal.raca = prompt("Qual é a raça do seu gato? ").trim()
-    animal.adotado = prompt("Ele foi adotado? ?(S/N) ").trim().toLowerCase();
-    animal.racaMas = animal.raca.charAt(0).toUpperCase()+animal.raca.slice(1).toLowerCase();
-
-    const formatName = formatarNome(animal.nome)
-    console.log("New Nome: "+ animal.nome)
-
-    if(animal.adotado === "s" || animal.adotado == "Sim"){
-        console.log(`O ${animal.nome} tem ${animal.idade} anos, é da raça ${animal.racaMas}, tem ${animal.peso} kilos e foi adotado`);
-    } else if(adotado === "n"|| adotado == "Não" || adotado == "Nao"){
-        console.log(`O ${formatName} tem ${animal.idade} anos, é da raça ${racaMas}, tem ${animal.peso} kilos e não foi adotado`);
-    }else{
-        console.log(`O ${formatName} tem ${animal.idade} anos, é da raça ${animal.racaMas}, tem ${animal.peso} kilos e não foi informado se foi adotado`);
-    }
+    
+    animal = preencherForm(animal, "Gato")
+    mostrarTag(animal)
     
 } else {
     console.log("Tipo de animal não suportado")
