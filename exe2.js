@@ -36,7 +36,8 @@ function verificarSeNomeValido(nome){
 
 function validarIdade(idade) {
     const numero = Number(idade);
-    if (!idade || isNaN(numero) || numero < 0 || numero > 50 || !Number.isInteger(numero)) {
+    if (!idade || isNaN(numero) || numero < 0 || numero > 100 || !Number.isInteger(numero)) {
+        console.log("Idade inválida");
         return false;
     }
 
@@ -46,6 +47,7 @@ function validarIdade(idade) {
 function validarPeso(peso) {
     const numero = Number(peso);
     if (!peso || isNaN(numero) || numero < 0 || numero > 250 || !Number.isInteger(numero)) {
+        console.log("Peso inválido");
         return false;
     }
 
