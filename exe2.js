@@ -17,11 +17,15 @@ function removerCaracteresEspeciais(nome) {
     return nome.replace(/[^a-zA-ZÀ-ÿ\s]/g, "")
 }
 
-function removerEspacosEntreAPalavra(nome) {
-    return nome.replace(/\s+/g, "")
+function formatarTexto(nome) {
+    let nomeFormatado;
+    nomeFormatado = removerCaracteresEspeciais(nome);
+    nomeFormatado = tornarAPrimeiraLetraMaiuscula(nomeFormatado);
+    return nomeFormatado;
 }
 
 function tornarAPrimeiraLetraMaiuscula(nome){
+    if (!nome) return "";
     return nome.charAt(0).toUpperCase() + nome.slice(1, nome.length).toLowerCase();
 }
 
@@ -29,62 +33,136 @@ function verificarSeNomeValido(nome){
     return nome.split(" ").length === 1
 }
 
+
+function validarIdade(idade) {
+    const numero = Number(idade);
+    if (!idade || isNaN(numero) || numero < 0 || numero > 50 || !Number.isInteger(numero)) {
+        return false;
+    }
+
+    return true;
+}
+
+function validarPeso(peso) {
+    const numero = Number(peso);
+    if (!peso || isNaN(numero) || numero < 0 || numero > 250 || !Number.isInteger(numero)) {
+        return false;
+    }
+
+    return true;
+}
+
+function obterStatusAdocao(valor) {
+    const resposta = String(valor).trim().toLowerCase();
+
+    if (resposta === "s" || resposta === "sim") {
+        return "foi adotado";
+    } else if (resposta === "n" || resposta === "nao" || resposta === "não") {
+        return "não foi adotado";
+    } else {
+        return "não foi informado se foi adotado";
+    }
+}
+
+
+
 function preencherForm(animal, tipoPet){
 
-    animal.nome = prompt(`Qual é o nome do seu ${tipoPet}? `)
-    
-    const valido = verificarSeNomeValido(animal.nome)
-
     let nomeValido = false;
+    let idadeValida = false;
+    let pesoValido = false;
 
     while (!nomeValido) {
-        animal.nome = prompt(`Qual é o nome do seu ${tipoPet} ?`).trim();
-        nomeValido = verificarSeNomeValido(animal.nome);
+        animal.nomeOriginal = prompt(`Qual é o nome do seu ${tipoPet} ? `).trim();
+        nomeValido = verificarSeNomeValido(animal.nomeOriginal);
 
         if (!nomeValido) {
             console.log("Só é suportado apenas 1 nome. Por favor, preencha novamente...");
         }
     }
+    
+    animal.nome = formatarTexto(animal.nomeOriginal);
+    
+    while (!idadeValida) {
+        const entradaIdade = prompt(`Qual é a idade do seu ${tipoPet} ? `)
+        idadeValida = validarIdade(entradaIdade);
 
-    animal.idade = prompt(`Qual é ao idade do seu ${tipoPet} ?`)
-    animal.peso = prompt(`Qual é o peso do seu ${tipoPet} ? `)
+        if (!idadeValida) {
+            console.log("Por favor, insira uma idade válida entre 0 e 50.");
+        }
+        else {
+            animal.idade = Number(entradaIdade);
+            break;
+        }
+    }
+    
+    while (!pesoValido) {
+        const entradaPeso = prompt(`Qual é o peso do seu ${tipoPet} ? `)
+        pesoValido = validarPeso(entradaPeso);
+
+        if (!pesoValido) {
+            console.log("Por favor, insira um peso válido entre 0 e 250.");
+        }
+        else {
+            animal.peso = Number(entradaPeso);
+            break;
+        }
+    }
     animal.raca = prompt(`Qual é a raça do seu ${tipoPet} ? `).trim()
-    animal.adotado = prompt("Ele foi adotado? ?(S/N) ").trim().toLowerCase();
-    animal.racaMas = tornarAPrimeiraLetraMaiuscula(racaMas);
+    animal.adotado = prompt("Ele foi adotado? (S/N) ").trim().toLowerCase();
+    animal.statusAdocao = obterStatusAdocao(animal.adotado);
+
+    animal.raca = formatarTexto(animal.raca);
+
     return animal;
 }
 
+
 function mostrarTag(animal) {
-    const nome = animal.nome;
-    const idade = animal.idade;
-    const raca = animal.racaMas;
-    const peso = animal.peso;
-    const adotado = String(animal.adotado).toLowerCase();
-
-    if (adotado === "s" || adotado === "sim") {
-        statusAdocao = "foi adotado";
-    } else if (adotado === "n" || adotado === "nao" || adotado === "não") {
-        statusAdocao = "não foi adotado";
-    } else {
-        statusAdocao = "não foi informado se foi adotado";
-    }
-
-    console.log(`O ${nome} tem ${idade} anos, é da raça ${raca}, tem ${peso} kilos e ${statusAdocao}`);
+    console.log(`--------------------------------------------------------------------------------------------------------`);
+    console.log(`------------------------------------- TAG CRIADA COM SUCESSO -------------------------------------------`);
+    console.log(`Nome: ${animal.nome}`);
+    console.log(`Idade: ${animal.idade} ano(s)`);
+    console.log(`Peso: ${animal.peso} kg(s)`);
+    console.log(`Raça: ${animal.raca}`);
+    console.log(`Adotado: ${animal.statusAdocao}`);
+    console.log(`--------------------------------------------------------------------------------------------------------`);
+    console.log(`Nome Original: ${animal.nomeOriginal}`)
+    console.log(`--------------------------------------------------------------------------------------------------------`);
 }
-  
-const tipo = prompt("Qual eh o tipo de pet? G- Gato C- Cachorro ").trim().toLowerCase();
 
-let animal ={}
+function pegarTipoPet(){
+    const tipoPet = prompt("Qual eh o tipo de pet? G- Gato C- Cachorro ").trim().toLowerCase();
+    return tipoPet;
+}
 
-if(tipo === "c" || tipo === "cachorro") { 
-    animal = preencherForm(animal, "Cachorro")
-    mostrarTag(animal)
+let novoPet = true;
+let tipo;
+
+console.log("--- Seja Bem vindo ao Mundo Pet -----")
+while (novoPet) {
    
-} else if (tipo === "g"|| tipo === "gato") {
-    
-    animal = preencherForm(animal, "Gato")
-    mostrarTag(animal)
-    
-} else {
-    console.log("Tipo de animal não suportado")
+    let animal ={}
+    tipo = pegarTipoPet()
+
+    if(tipo === "c" || tipo === "cachorro") { 
+        animal = preencherForm(animal, "Cachorro")
+        mostrarTag(animal)
+
+    } else if (tipo === "g"|| tipo === "gato") {
+        animal = preencherForm(animal, "Gato")
+        mostrarTag(animal)
+        
+    } else {
+        console.log("Tipo de animal não suportado")
+    }
+    novoPet = prompt("Você possui mais algum outro Pet ? (S/N) ").trim().toLowerCase();
+    if (novoPet === "sim" || novoPet === "s"){
+        novoPet = true;
+    } else {
+        novoPet = false;
+        console.log(`-----------------------------------------------------------------------------------`);
+        console.log("Obrigado por usar o nosso sistema")
+        console.log(`-----------------------------------------------------------------------------------`);
+    }
 }

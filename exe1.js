@@ -5,6 +5,10 @@
  * no abrigo. O dono ira informar nome, idade, peso, raça e se é adotado ou nao.
  */
 const prompt = require('prompt-sync')();
+
+while (novoPet == true) {
+
+
 const tipo = prompt("Qual eh o tipo de pet? G- Gato C- Cachorro ").trim().toLowerCase();
 
 const animal ={}
@@ -42,4 +46,5 @@ if(tipo === "c" || tipo === "cachorro") {
     
 } else {
     console.log("Tipo de animal não suportado")
+}
 }
